@@ -198,10 +198,34 @@ public class Path {
      * 
      * @return true if the path is valid, false otherwise.
      * 
-     * @deprecated Need to be implemented.
+     * Need to be implemented.
      */
     public boolean isValid() {
         // TODO:
+    	if(this.isEmpty()) {return true;} // it is empty;
+    	if(this.getArcs().size()==0 && this.getOrigin()!=null) {  // it contains a single node (without arcs);
+    		return true;
+    	}
+    	if(this.getArcs().get(0).getOrigin()==this.getOrigin()) {
+    		Node previoudArcDestination = this.getArcs().get(0).getDestination();
+    		Node originPath = previoudArcDestination;
+    		boolean firstStep = true; // for the first comming in the loop to ignore the first Node
+    		for(Arc arc:this.getArcs()) {
+    			if(arc==this.getArcs().get(0) && firstStep) {
+    				firstStep = false;
+    				continue;
+    			}
+    			if(previoudArcDestination==arc.getOrigin()) {
+    				previoudArcDestination = arc.getDestination();
+    			}else {
+    				if(originPath==arc.getOrigin()) {
+    					
+    				}
+    				return false;
+    			}
+    		}
+    		return true;
+    	}
         return false;
     }
 
@@ -210,11 +234,16 @@ public class Path {
      * 
      * @return Total length of the path (in meters).
      * 
-     * @deprecated Need to be implemented.
+     * Need to be implemented.
      */
     public float getLength() {
-        // TODO:
-        return 0;
+        // TODO
+    	List<Arc> arcs=this.getArcs();
+    	float length = 0.0f;
+    	for(Arc arc : arcs) {
+    		length += arc.getLength();
+    	}
+        return length;
     }
 
     /**
@@ -225,11 +254,17 @@ public class Path {
      * @return Time (in seconds) required to travel this path at the given speed (in
      *         kilometers-per-hour).
      * 
-     * @deprecated Need to be implemented.
+     *  Need to be implemented.
      */
     public double getTravelTime(double speed) {
         // TODO:
-        return 0;
+    	double travelTime = 0.0d;
+    	List<Arc> arcs=this.getArcs();
+    	
+    	for(Arc arc : arcs) {
+    		travelTime += arc.getTravelTime(speed);
+    	}
+        return travelTime;
     }
 
     /**
@@ -238,11 +273,17 @@ public class Path {
      * 
      * @return Minimum travel time to travel this path (in seconds).
      * 
-     * @deprecated Need to be implemented.
+     *	 Need to be implemented.
      */
     public double getMinimumTravelTime() {
         // TODO:
-        return 0;
+    	double travelTime = 0.0d;
+    	List<Arc> arcs=this.getArcs();
+    	
+    	for(Arc arc : arcs) {
+    		travelTime += arc.getMinimumTravelTime();
+    	}
+        return travelTime;
     }
 
 }
