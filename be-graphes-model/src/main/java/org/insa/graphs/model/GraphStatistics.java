@@ -1,4 +1,4 @@
-package org.insa.graphs.model;
+	package org.insa.graphs.model;
 
 /**
  * <p>
