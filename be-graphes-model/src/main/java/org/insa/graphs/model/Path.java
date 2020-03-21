@@ -2,7 +2,9 @@ package org.insa.graphs.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 /**
  * <p>
@@ -30,12 +32,49 @@ public class Path {
      * @throws IllegalArgumentException If the list of nodes is not valid, i.e. two
      *         consecutive nodes in the list are not connected in the graph.
      * 
-     * @deprecated Need to be implemented.
+     * Need to be implemented.
      */
     public static Path createFastestPathFromNodes(Graph graph, List<Node> nodes)
             throws IllegalArgumentException {
         List<Arc> arcs = new ArrayList<Arc>();
-        // TODO:
+        
+        if(nodes.size()==0) {
+        	return new Path(graph);
+        }
+        if(nodes.size()==1) {
+        	return new Path(graph,nodes.get(0));
+        }
+        Iterator<Node> nextNode_it = nodes.listIterator(1);
+        double fastestWay = 0f;
+        int chosenId=0;
+        for(Node node :nodes) {
+        	if(nextNode_it.hasNext()) {
+        		Node nextNode = nextNode_it.next();
+        		List<Arc> successors = node.getSuccessors();
+            	boolean found = false;
+            	for(Arc arc : successors) {
+            		if(arc.getDestination().compareTo(nextNode)==0) {
+            			if(found==false) {
+            				fastestWay = arc.getMinimumTravelTime();
+            				chosenId = successors.indexOf(arc);
+            			}else if(arc.getMinimumTravelTime()< fastestWay) {
+            				fastestWay = arc.getMinimumTravelTime();
+            				chosenId = successors.indexOf(arc);
+            			}
+            			found = true;
+            		}
+            	}
+            	
+            	if(found == false  ) { // Il existe deux Node non lié
+            		throw new IllegalArgumentException();
+            	}
+            
+            	arcs.add(successors.get(chosenId));
+        	}else {
+        		break;
+        	}
+        }
+
         return new Path(graph, arcs);
     }
 
@@ -51,12 +90,49 @@ public class Path {
      * @throws IllegalArgumentException If the list of nodes is not valid, i.e. two
      *         consecutive nodes in the list are not connected in the graph.
      * 
-     * @deprecated Need to be implemented.
+     *  Need to be implemented.
      */
     public static Path createShortestPathFromNodes(Graph graph, List<Node> nodes)
-            throws IllegalArgumentException {
+         throws IllegalArgumentException {
         List<Arc> arcs = new ArrayList<Arc>();
-        // TODO:
+        if(nodes.size()==0) {
+        	return new Path(graph);
+        }
+        if(nodes.size()==1) {
+    
+        	return new Path(graph,nodes.get(0));
+        }
+        Iterator<Node> nextNode_it = nodes.listIterator(1);
+        float shortestLength = 0f;
+        int chosenId=0;
+        for(Node node :nodes) {
+        	if(nextNode_it.hasNext()) {
+        		Node nextNode = nextNode_it.next();
+        		List<Arc> successors = node.getSuccessors();
+            	boolean found = false;
+            	for(Arc arc : successors) {
+            		if(arc.getDestination().compareTo(nextNode)==0) {
+            			if(found==false) {
+            				shortestLength = arc.getLength();
+            				chosenId = successors.indexOf(arc);
+            			}else if(arc.getLength() < shortestLength) {
+            				shortestLength = arc.getLength();
+            				chosenId = successors.indexOf(arc);
+            			}
+            			found = true;
+            		}
+            	}
+            	
+            	if(found == false  ) { // Il existe deux Node non lié
+            		throw new IllegalArgumentException();
+            	}
+            
+            	arcs.add(successors.get(chosenId));
+        	}else {
+        		break;
+        	}
+        }
+
         return new Path(graph, arcs);
     }
 
@@ -206,7 +282,7 @@ public class Path {
     	if(this.getArcs().size()==0 && this.getOrigin()!=null) {  // it contains a single node (without arcs);
     		return true;
     	}
-    	if(this.getArcs().get(0).getOrigin()==this.getOrigin()) {
+    	if(this.getArcs().get(0).getOrigin().compareTo(this.getOrigin())==0) {
     		Node previoudArcDestination = this.getArcs().get(0).getDestination();
     		Node originPath = previoudArcDestination;
     		boolean firstStep = true; // for the first comming in the loop to ignore the first Node
@@ -215,12 +291,10 @@ public class Path {
     				firstStep = false;
     				continue;
     			}
-    			if(previoudArcDestination==arc.getOrigin()) {
+    			if(previoudArcDestination.compareTo(arc.getOrigin())==0 ) {
     				previoudArcDestination = arc.getDestination();
     			}else {
-    				if(originPath==arc.getOrigin()) {
-    					
-    				}
+
     				return false;
     			}
     		}
