@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
+//import java.util.ListIterator;
 
 /**
  * <p>
@@ -277,14 +277,13 @@ public class Path {
      * Need to be implemented.
      */
     public boolean isValid() {
-        // TODO:
+     
     	if(this.isEmpty()) {return true;} // it is empty;
     	if(this.getArcs().size()==0 && this.getOrigin()!=null) {  // it contains a single node (without arcs);
     		return true;
     	}
     	if(this.getArcs().get(0).getOrigin().compareTo(this.getOrigin())==0) {
     		Node previoudArcDestination = this.getArcs().get(0).getDestination();
-    		Node originPath = previoudArcDestination;
     		boolean firstStep = true; // for the first comming in the loop to ignore the first Node
     		for(Arc arc:this.getArcs()) {
     			if(arc==this.getArcs().get(0) && firstStep) {
@@ -294,7 +293,6 @@ public class Path {
     			if(previoudArcDestination.compareTo(arc.getOrigin())==0 ) {
     				previoudArcDestination = arc.getDestination();
     			}else {
-
     				return false;
     			}
     		}

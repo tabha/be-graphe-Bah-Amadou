@@ -49,30 +49,35 @@ public class Launch {
         // Visit these directory to see the list of available files on Commetud.
         final String mapName = "/home/amadou/CoursINSA3MIC/BE_graphe/projet/be-graphes/Maps/insa.mapgr";
         final String pathName = "/home/amadou/CoursINSA3MIC/BE_graphe/projet/be-graphes/Maps/path_fr31insa_rangueil_r2.path";
-
+        
         // Create a graph reader.
-        final GraphReader reader = new BinaryGraphReader(
-                new DataInputStream(new BufferedInputStream(new FileInputStream(mapName))));
+        final Graph graph;
+        final Drawing drawing;
+        try (GraphReader reader = new BinaryGraphReader(new DataInputStream(
+                new BufferedInputStream(new FileInputStream(mapName)))))
+        {
+        	 // TODO: Read the graph.
+             graph = reader.read();
 
-        // TODO: Read the graph.
-        final Graph graph = reader.read();
+            // Create the drawing:
+             drawing = createDrawing();
 
-        // Create the drawing:
-        final Drawing drawing = createDrawing();
-
-        // TODO: Draw the graph on the drawing.
-        drawing.drawGraph(graph);
-        // TODO: Create a PathReader.
-        final PathReader pathReader = new BinaryPathReader(
+            // TODO: Draw the graph on the drawing.
+            drawing.drawGraph(graph);
+        }
+     // TODO: Create a PathReader.
+        try (PathReader pathReader =  new BinaryPathReader(
         		new DataInputStream(new BufferedInputStream(new FileInputStream(pathName)))
-        		);
+        		)) {
 
-        // TODO: Read the path.
-        final Path path = pathReader.readPath(graph);
+            // TODO: Read the path.
+            final Path path = pathReader.readPath(graph);
 
-        // TODO: Draw the path.
-        drawing.drawPath(path);
-        // pathReader.close'
+            // TODO: Draw the path.
+            drawing.drawPath(path);
+
+        }
+       
     }
 
 }

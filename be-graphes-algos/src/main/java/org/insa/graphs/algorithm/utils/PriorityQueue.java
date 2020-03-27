@@ -77,5 +77,15 @@ public interface PriorityQueue<E extends Comparable<E>> {
      * @throws EmptyPriorityQueueException if this queue is empty.
      */
     public E deleteMin() throws EmptyPriorityQueueException;
+    
+    /**
+     * Find and return the index of x .
+     * 
+     * @return The index of x, item in the queue.
+     * 			or -1 if x is not present in the queue
+     *
+     */
+    
+    public int indexOf(E x) ;
 
 }
