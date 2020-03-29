@@ -18,9 +18,9 @@ public abstract class AbstractInputData {
      * @see ArcInspector
      */
     public enum Mode {
-        TIME, LENGTH, CARS, VELO
+        TIME, LENGTH
     }
-
+    
     // Graph
     private final Graph graph;
 
@@ -67,7 +67,7 @@ public abstract class AbstractInputData {
     public Mode getMode() {
         return this.arcInspector.getMode();
     }
-
+    
     /**
      * Retrieve the maximum speed associated with this input data, or
      * {@link GraphStatistics#NO_MAXIMUM_SPEED} if none is associated. The maximum

@@ -19,7 +19,7 @@ public class Label implements Comparable<Label>{
 	 **/
 	private double cost;
 	
-	
+	private boolean alreadySeen;
 	private int father;
 	/*
 	 * create all Label from the graph
@@ -37,6 +37,7 @@ public class Label implements Comparable<Label>{
 	public Label(Node node) {
 		this.currentNode = node.getId();
 		this.marqued = false;
+		this.alreadySeen = false;
 		this.cost = Double.POSITIVE_INFINITY;
 		this.father = -1;
 	}
@@ -46,27 +47,35 @@ public class Label implements Comparable<Label>{
 	public boolean isMarqued() {
 		return this.marqued;
 	}
+	public boolean isAlreadySeen() {
+		return this.alreadySeen;
+	}
 	public double getCost() {
 		return this.cost;
 	}
+	
 	public void setMarqued() {
 		this.marqued = true;
 	}
 	public void setCost(double newcost) {
 		this.cost = newcost;
 	}
-	
+	public void setAlreadySeen() {
+		this.alreadySeen = true;
+	}
 	public void setFather(int numFather) {
 		this.father = numFather;
 	}
 
-
+	
 	@Override
 	public int compareTo(Label other) {
 		// TODO Auto-generated method stub
 		return Double.compare(this.cost, other.getCost());
 	}
+	
+	
 
-
+	
 	
 }

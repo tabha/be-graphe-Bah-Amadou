@@ -1,7 +1,6 @@
 package org.insa.graphs.algorithm.shortestpath;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -24,11 +23,8 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         final ShortestPathData data = getInputData();
         Graph graph = data.getGraph();
         List<Node>	nodes = graph.getNodes();
-        
         // Initialisation
-
         final int nbNodes = graph.size();
-  
         // Initialize array of distances.
         PriorityQueue<Label> tasBinaire = new BinaryHeap<Label>();
         // Initailize all labels
@@ -41,8 +37,6 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         // Notify observers about the first event (origin processed).
         notifyOriginProcessed(data.getOrigin());
 
-    
-   
         int count = 0;
         Label currentSortNode; 
         while(!labels.get(data.getDestination().getId()).isMarqued() && count < nbNodes) {
@@ -53,23 +47,23 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         			continue;
         		}
         		int nodeId = arc.getDestination().getId();
-        		 
         		if (!labels.get(nodeId).isMarqued()) {
+        			
         			double w = data.getCost(arc);
                     double oldDistance = labels.get(nodeId).getCost();
                     double newDistance = labels.get(currentSortNode.getNodeId()).getCost() + w;
-                    
                     if (Double.isInfinite(oldDistance) && Double.isFinite(newDistance)) {
                         notifyNodeReached(arc.getDestination());
                     }
                     if (newDistance < oldDistance) {
-                        int indexNodeTas = tasBinaire.indexOf(labels.get(nodeId));
-                        if (indexNodeTas == -1 ) { // introuvable dans le tas , on l'insère
-                        	labels.get(nodeId).setCost(newDistance);
-                        	tasBinaire.insert(labels.get(nodeId));
-                        }else {
-                        	labels.get(nodeId).setCost(newDistance);
-                        }
+                    	if(!labels.get(nodeId).isAlreadySeen()) {
+            				labels.get(nodeId).setAlreadySeen();
+            			}else {
+            				tasBinaire.remove(labels.get(nodeId));
+            			}
+                        labels.get(nodeId).setCost(newDistance); // mise a jour
+                        labels.get(nodeId).setFather(currentSortNode.getNodeId());
+                        tasBinaire.insert(labels.get(nodeId));
                         predecessorArcs[arc.getDestination().getId()] = arc;
                     }
         		}

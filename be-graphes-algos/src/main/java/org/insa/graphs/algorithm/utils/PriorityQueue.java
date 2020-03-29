@@ -85,7 +85,5 @@ public interface PriorityQueue<E extends Comparable<E>> {
      * 			or -1 if x is not present in the queue
      *
      */
-    
-    public int indexOf(E x) ;
 
 }

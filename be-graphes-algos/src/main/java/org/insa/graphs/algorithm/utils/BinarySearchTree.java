@@ -61,10 +61,5 @@ public class BinarySearchTree<E extends Comparable<E>> implements PriorityQueue<
         return min;
     }
 
-	@Override
-	public int indexOf(E x) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 
 }
