@@ -13,9 +13,10 @@ import org.insa.graphs.model.Node;
 import org.insa.graphs.model.Path;
 
 public class DijkstraAlgorithm extends ShortestPathAlgorithm {
-
+	protected int nombreSucceurTeste;
     public DijkstraAlgorithm(ShortestPathData data) {
         super(data);
+        this.nombreSucceurTeste = 0;
     }
 
     @Override
@@ -36,17 +37,28 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         tasBinaire.insert(labels.get(originId)); // inser(s,tas)
         // Notify observers about the first event (origin processed).
         notifyOriginProcessed(data.getOrigin());
-
+        boolean coutCroissant = true;
+        double previousCost = 0.0;
         int count = 0;
         Label currentSortNode; 
         while(!labels.get(data.getDestination().getId()).isMarqued() && count < nbNodes) {
+        	if(tasBinaire.isEmpty()) {
+        		break;
+        	}
         	currentSortNode = tasBinaire.deleteMin(); // extract Min 
         	currentSortNode.setMarqued();
+        	if(previousCost <= currentSortNode.getCost()) {
+        		previousCost = currentSortNode.getCost();
+        	}else {
+        		coutCroissant = false;
+        	}
+        	System.out.println("cout du sommet :"+currentSortNode.getNodeId() + " est => "+ currentSortNode.getCost());
         	for(Arc arc: nodes.get(currentSortNode.getNodeId()).getSuccessors()) {
         		if(!data.isAllowed(arc)) {
         			continue;
         		}
         		int nodeId = arc.getDestination().getId();
+        		this.nombreSucceurTeste++;
         		if (!labels.get(nodeId).isMarqued()) {
         			
         			double w = data.getCost(arc);
@@ -70,11 +82,13 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	}
         	count ++;
         }
+        System.out.println("L'évolution de cout de marquage dans le tas est : croissant? "+ coutCroissant);
         ShortestPathSolution solution = null;
-
+        System.out.println("Nombre d'itération :"+ count + " interations");
         // Destination has no predecessor, the solution is infeasible...
         if (predecessorArcs[data.getDestination().getId()] == null) {
             solution = new ShortestPathSolution(data, Status.INFEASIBLE);
+            System.out.println("Le nombre d'arcs du PCC: 0");
         }
         else {
 
@@ -84,17 +98,24 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
             // Create the path from the array of predecessors...
             ArrayList<Arc> arcs = new ArrayList<>();
             Arc arc = predecessorArcs[data.getDestination().getId()];
+            int arcCount= 0;
             while (arc != null) {
                 arcs.add(arc);
                 arc = predecessorArcs[arc.getOrigin().getId()];
+                arcCount++;
             }
-
+            System.out.println("Le nombre d'arcs du PCC: "+arcCount);
             // Reverse the path...
             Collections.reverse(arcs);
 
             // Create the final solution.
+            
             solution = new ShortestPathSolution(data, Status.OPTIMAL, new Path(graph, arcs));
+            System.out.println("Path Found is Valid? "+ solution.getPath().isValid());
+            System.out.println("Longeur du chemin (théorique) =>"+solution.getPath().getLength());
+            System.out.println("nombre de successeur testee :"+ this.nombreSucceurTeste);
         }
+        
         return solution;
     }
 
