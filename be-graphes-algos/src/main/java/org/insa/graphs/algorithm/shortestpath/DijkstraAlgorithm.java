@@ -27,7 +27,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         // Initialisation
         final int nbNodes = graph.size();
         // Initialize array of distances.
-        PriorityQueue<Label> tasBinaire = new BinaryHeap<Label>();
+        BinaryHeap<Label> tasBinaire = new BinaryHeap<Label>();
         // Initailize all labels
         ArrayList<Label> labels= Label.createAllLabelFromGraph(graph);
         // Initialize array of predecessors.
@@ -38,6 +38,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         // Notify observers about the first event (origin processed).
         notifyOriginProcessed(data.getOrigin());
         boolean coutCroissant = true;
+        boolean tasValid = true;
         double previousCost = 0.0;
         int count = 0;
         Label currentSortNode; 
@@ -80,8 +81,12 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
                     }
         		}
         	}
+        	if(tasValid) {
+        		tasValid = tasBinaire.isValid(0);
+        	}
         	count ++;
         }
+        System.out.println("tas valid durant tout le traitement? " + tasBinaire.isValid(0));
         System.out.println("L'évolution de cout de marquage dans le tas est : croissant? "+ coutCroissant);
         ShortestPathSolution solution = null;
         System.out.println("Nombre d'itération :"+ count + " interations");
