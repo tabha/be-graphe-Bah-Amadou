@@ -53,7 +53,9 @@ public class Label implements Comparable<Label>{
 	public double getCost() {
 		return this.cost;
 	}
-	
+	public double getTotalCost() {
+		return this.cost;
+	}
 	public void setMarqued() {
 		this.marqued = true;
 	}
@@ -71,7 +73,7 @@ public class Label implements Comparable<Label>{
 	@Override
 	public int compareTo(Label other) {
 		// TODO Auto-generated method stub
-		return Double.compare(this.cost, other.getCost());
+		return Double.compare(this.getTotalCost(), other.getTotalCost());
 	}
 	
 	

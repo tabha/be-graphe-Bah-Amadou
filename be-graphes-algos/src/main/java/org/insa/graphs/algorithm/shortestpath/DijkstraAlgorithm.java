@@ -29,12 +29,14 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         // Initialize array of distances.
         BinaryHeap<Label> tasBinaire = new BinaryHeap<Label>();
         // Initailize all labels
-        ArrayList<Label> labels= Label.createAllLabelFromGraph(graph);
+        //ArrayList<Label> labels= Label.createAllLabelFromGraph(graph);
+        Label[] labels = new Label[nbNodes];
         // Initialize array of predecessors.
         Arc[] predecessorArcs = new Arc[nbNodes];
         int originId = data.getOrigin().getId();
-        labels.get(originId).setCost(0); // cost(s) = 0
-        tasBinaire.insert(labels.get(originId)); // inser(s,tas)
+        labels[originId] = this.newLabel(data.getOrigin(), data);
+        labels[originId].setCost(0); // cost(s) = 0
+        tasBinaire.insert(labels[originId]); // inser(s,tas)
         // Notify observers about the first event (origin processed).
         notifyOriginProcessed(data.getOrigin());
         boolean coutCroissant = true;
@@ -42,42 +44,52 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         double previousCost = 0.0;
         int count = 0;
         Label currentSortNode; 
-        while(!labels.get(data.getDestination().getId()).isMarqued() && count < nbNodes) {
+        boolean finish = false;
+        while(!finish && count < nbNodes) {
         	if(tasBinaire.isEmpty()) {
         		break;
         	}
         	currentSortNode = tasBinaire.deleteMin(); // extract Min 
         	currentSortNode.setMarqued();
+        	if(currentSortNode.getNodeId() == data.getDestination().getId()) {
+        		finish = true;
+        	}
         	if(previousCost <= currentSortNode.getCost()) {
         		previousCost = currentSortNode.getCost();
         	}else {
         		coutCroissant = false;
         	}
-        	System.out.println("cout du sommet :"+currentSortNode.getNodeId() + " est => "+ currentSortNode.getCost());
+        	//System.out.println("cout du sommet :"+currentSortNode.getNodeId() + " est => "+ currentSortNode.getCost());
         	for(Arc arc: nodes.get(currentSortNode.getNodeId()).getSuccessors()) {
         		if(!data.isAllowed(arc)) {
         			continue;
         		}
         		int nodeId = arc.getDestination().getId();
+        		if(labels[nodeId]==null) {
+        			labels[nodeId] = this.newLabel(arc.getDestination(), data);
+        		}
         		this.nombreSucceurTeste++;
-        		if (!labels.get(nodeId).isMarqued()) {
+        		if (!labels[nodeId].isMarqued()) {
         			
         			double w = data.getCost(arc);
-                    double oldDistance = labels.get(nodeId).getCost();
-                    double newDistance = labels.get(currentSortNode.getNodeId()).getCost() + w;
+                    double oldDistance = labels[nodeId].getTotalCost();
+                    double newDistance = labels[currentSortNode.getNodeId()].getTotalCost() + w;
                     if (Double.isInfinite(oldDistance) && Double.isFinite(newDistance)) {
                         notifyNodeReached(arc.getDestination());
                     }
-                    if (newDistance < oldDistance) {
-                    	if(!labels.get(nodeId).isAlreadySeen()) {
-            				labels.get(nodeId).setAlreadySeen();
+                    
+                    if (newDistance <oldDistance) {
+                    	if(!labels[nodeId].isAlreadySeen()) {
+            				labels[nodeId].setAlreadySeen();
             			}else {
-            				tasBinaire.remove(labels.get(nodeId));
+            				tasBinaire.remove(labels[nodeId]);
             			}
-                        labels.get(nodeId).setCost(newDistance); // mise a jour
-                        labels.get(nodeId).setFather(currentSortNode.getNodeId());
-                        tasBinaire.insert(labels.get(nodeId));
+                        labels[nodeId].setCost(labels[currentSortNode.getNodeId()].getCost()+w); // mise a jour
+                        labels[nodeId].setFather(currentSortNode.getNodeId());
+                        tasBinaire.insert(labels[nodeId]);
                         predecessorArcs[arc.getDestination().getId()] = arc;
+                    }else if(newDistance==oldDistance) {
+                    	
                     }
         		}
         	}
@@ -124,4 +136,8 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         return solution;
     }
 
+    public Label newLabel(Node node, ShortestPathData data) {
+    	return new Label(node);
+    }
+    
 }
