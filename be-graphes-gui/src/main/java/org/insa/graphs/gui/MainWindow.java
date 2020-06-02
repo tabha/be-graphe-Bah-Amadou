@@ -45,8 +45,11 @@ import javax.swing.border.EmptyBorder;
 
 import org.insa.graphs.algorithm.AbstractSolution;
 import org.insa.graphs.algorithm.AlgorithmFactory;
+import org.insa.graphs.algorithm.ArcInspector;
 import org.insa.graphs.algorithm.carpooling.CarPoolingAlgorithm;
 import org.insa.graphs.algorithm.packageswitch.PackageSwitchAlgorithm;
+import org.insa.graphs.algorithm.packageswitch.PackageSwitchData;
+import org.insa.graphs.algorithm.packageswitch.PackageSwitchSolution;
 import org.insa.graphs.algorithm.shortestpath.ShortestPathAlgorithm;
 import org.insa.graphs.algorithm.shortestpath.ShortestPathData;
 import org.insa.graphs.algorithm.shortestpath.ShortestPathSolution;
@@ -66,6 +69,7 @@ import org.insa.graphs.gui.observers.WeaklyConnectedComponentGraphicObserver;
 import org.insa.graphs.gui.utils.FileUtils;
 import org.insa.graphs.gui.utils.FileUtils.FolderType;
 import org.insa.graphs.model.Graph;
+import org.insa.graphs.model.Node;
 import org.insa.graphs.model.Path;
 import org.insa.graphs.model.io.BinaryGraphReader;
 import org.insa.graphs.model.io.BinaryPathReader;
@@ -258,9 +262,60 @@ public class MainWindow extends JFrame {
                 "Origin Car", "Origin Pedestrian", "Destination Car", "Destination Pedestrian" },
                 true);
 
-        psPanel = new AlgorithmPanel(this, PackageSwitchAlgorithm.class, "Car-Pooling",
-                new String[] { "Oribin A", "Origin B", "Destination A", "Destination B" }, true);
+        psPanel = new AlgorithmPanel(this, PackageSwitchAlgorithm.class, "Package-Switch",
+                new String[] { "Origin A", "Origin B", "Destination A", "Destination B" }, true);
+        psPanel.addStartActionListener(
+        		new ActionListener() {
+        			@Override
+        			public void actionPerformed(ActionEvent e) {
+                        StartActionEvent evt = (StartActionEvent) e;
+                        PackageSwitchData data = new PackageSwitchData(graph, evt.getArcFilter(), evt.getNodes().get(0),
+                                evt.getNodes().get(1),evt.getNodes().get(2),evt.getNodes().get(3));
 
+                        PackageSwitchAlgorithm psAlgorithm = null;
+                        try {
+                        	psAlgorithm = (PackageSwitchAlgorithm) AlgorithmFactory
+                                    .createAlgorithm(evt.getAlgorithmClass(), data);
+                        }
+                        catch (Exception e1) {
+                            JOptionPane.showMessageDialog(MainWindow.this,
+                                    "An error occurred while creating the specified algorithm.",
+                                    "Internal error: Algorithm instantiation failure",
+                                    JOptionPane.ERROR_MESSAGE);
+                            e1.printStackTrace();
+                            return;
+                        }
+
+                        spPanel.setEnabled(false);
+
+                        if (evt.isGraphicVisualizationEnabled()) {
+                        	//psAlgorithm.addObserver(new ShortestPathGraphicObserver(drawing));
+                        }
+                        if (evt.isTextualVisualizationEnabled()) {
+                        	//psAlgorithm.addObserver(new ShortestPathTextObserver(printStream));
+                        }
+
+                        final PackageSwitchAlgorithm copyAlgorithm = psAlgorithm;
+                        launchThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                // Run the algorithm.
+                            	PackageSwitchSolution solution = copyAlgorithm.run();
+                                // Add the solution to the solution panel (but do not display
+                                // overlay).
+                                spPanel.solutionPanel.addSolution(solution, false);
+                                // If the solution is feasible, add the path to the path panel.
+                                if (solution.isFeasible()) {
+                                    pathPanel.addPath(solution.getNewPathRobot(1));
+                                    pathPanel.addPath(solution.getNewPathRobot(2));
+                                }
+                                // Show the solution panel and enable the shortest-path panel.
+                                spPanel.solutionPanel.setVisible(true);
+                                spPanel.setEnabled(true);
+                            }
+                        });
+                    }
+        		});
         // add algorithm panels
         algoPanels.add(wccPanel);
         algoPanels.add(spPanel);
@@ -633,7 +688,7 @@ public class MainWindow extends JFrame {
         mainPanel.setDividerLocation(dividerLocation);
     }
 
-    private JMenuBar createMenuBar(ActionListener openMapActionListener) {
+     private JMenuBar createMenuBar(ActionListener openMapActionListener) {
 
         // Open Map item...
         JMenuItem openMapItem = new JMenuItem("Open Map... ", KeyEvent.VK_O);

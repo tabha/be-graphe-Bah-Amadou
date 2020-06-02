@@ -47,8 +47,8 @@ public class Launch {
     public static void main(String[] args) throws Exception {
 
         // Visit these directory to see the list of available files on Commetud.
-        final String mapName = "/home/amadou/CoursINSA3MIC/BE_graphe/projet/be-graphes/Maps/insa.mapgr";
-        final String pathName = "/home/amadou/CoursINSA3MIC/BE_graphe/projet/be-graphes/Maps/path_fr31insa_rangueil_r2.path";
+        final String mapName = "/home/amadou/CoursINSA3MIC/BE_graphe/projet/be-graphes/Maps/haute-garonne/europe/france/haute-garonne.mapgr";
+        //final String pathName = "/home/amadou/CoursINSA3MIC/BE_graphe/path_fr31insa_rangueil_r2.path";
         
         // Create a graph reader.
         final Graph graph;
@@ -66,17 +66,19 @@ public class Launch {
             drawing.drawGraph(graph);
         }
      // TODO: Create a PathReader.
+        /*
         try (PathReader pathReader =  new BinaryPathReader(
         		new DataInputStream(new BufferedInputStream(new FileInputStream(pathName)))
         		)) {
 
             // TODO: Read the path.
-            final Path path = pathReader.readPath(graph);
+            //final Path path = pathReader.readPath(graph);
 
             // TODO: Draw the path.
-            drawing.drawPath(path);
+            //drawing.drawPath(path);
 
         }
+        */
        
     }
 

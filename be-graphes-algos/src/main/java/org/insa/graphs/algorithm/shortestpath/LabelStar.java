@@ -12,10 +12,13 @@ public class LabelStar extends Label {
 		super(node);
 		
 		if(data.getMode()==AbstractInputData.Mode.LENGTH) {
-			this.inf = (double)Point.distance(node.getPoint(),data.getDestination().getPoint());
+			this.inf = (double)Point.distance(node.getPoint(),
+											  data.getDestination().getPoint());
 		}else { // TIME
-			int vitesse = Math.max(data.getMaximumSpeed(), data.getGraph().getGraphInformation().getMaximumSpeed()); 
-			this.inf = (double) (Point.distance(node.getPoint(), data.getDestination().getPoint()) / vitesse*1000.d/3600.d);
+			int vitesse = Math.max(data.getMaximumSpeed(), 
+					               data.getGraph().getGraphInformation().getMaximumSpeed()); 
+			this.inf = (double) (Point.distance(node.getPoint(), 
+					               data.getDestination().getPoint()) / (vitesse*1000.d/3600.d));
 		}
 		
 	}

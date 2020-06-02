@@ -1,5 +1,6 @@
 package org.insa.graphs.algorithm.shortestpath;
 
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -44,8 +45,9 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         double previousCost = 0.0;
         int count = 0;
         Label currentSortNode; 
+        
         boolean finish = false;
-        while(!finish && count < nbNodes) {
+        while(!finish && count < nbNodes && !tasBinaire.isEmpty()) {
         	if(tasBinaire.isEmpty()) {
         		break;
         	}
@@ -59,7 +61,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	}else {
         		coutCroissant = false;
         	}
-        	//System.out.println("cout du sommet :"+currentSortNode.getNodeId() + " est => "+ currentSortNode.getCost());
+        	
         	for(Arc arc: nodes.get(currentSortNode.getNodeId()).getSuccessors()) {
         		if(!data.isAllowed(arc)) {
         			continue;
@@ -70,14 +72,12 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         		}
         		this.nombreSucceurTeste++;
         		if (!labels[nodeId].isMarqued()) {
-        			
         			double w = data.getCost(arc);
                     double oldDistance = labels[nodeId].getTotalCost();
                     double newDistance = labels[currentSortNode.getNodeId()].getTotalCost() + w;
                     if (Double.isInfinite(oldDistance) && Double.isFinite(newDistance)) {
                         notifyNodeReached(arc.getDestination());
                     }
-                    
                     if (newDistance <oldDistance) {
                     	if(!labels[nodeId].isAlreadySeen()) {
             				labels[nodeId].setAlreadySeen();
@@ -88,8 +88,6 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
                         labels[nodeId].setFather(currentSortNode.getNodeId());
                         tasBinaire.insert(labels[nodeId]);
                         predecessorArcs[arc.getDestination().getId()] = arc;
-                    }else if(newDistance==oldDistance) {
-                    	
                     }
         		}
         	}
@@ -98,14 +96,15 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	}
         	count ++;
         }
-        System.out.println("tas valid durant tout le traitement? " + tasBinaire.isValid(0));
-        System.out.println("L'évolution de cout de marquage dans le tas est : croissant? "+ coutCroissant);
+        //System.out.println("tas valid durant tout le traitement? " + tasBinaire.isValid(0));
+        //System.out.println("L'évolution de cout de marquage dans le tas est : croissant? "+ coutCroissant);
         ShortestPathSolution solution = null;
-        System.out.println("Nombre d'itération :"+ count + " interations");
+        //System.out.println("Nombre d'itération :"+ count + " interations");
         // Destination has no predecessor, the solution is infeasible...
+        double distanceChemin = 0.0;
         if (predecessorArcs[data.getDestination().getId()] == null) {
             solution = new ShortestPathSolution(data, Status.INFEASIBLE);
-            System.out.println("Le nombre d'arcs du PCC: 0");
+            //System.out.println("Le nombre d'arcs du PCC: 0");
         }
         else {
 
@@ -118,24 +117,28 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
             int arcCount= 0;
             while (arc != null) {
                 arcs.add(arc);
+                distanceChemin += arc.getLength();
                 arc = predecessorArcs[arc.getOrigin().getId()];
                 arcCount++;
             }
-            System.out.println("Le nombre d'arcs du PCC: "+arcCount);
+            //System.out.println("Le nombre d'arcs du PCC: "+arcCount);
             // Reverse the path...
             Collections.reverse(arcs);
 
             // Create the final solution.
             
             solution = new ShortestPathSolution(data, Status.OPTIMAL, new Path(graph, arcs));
-            System.out.println("Path Found is Valid? "+ solution.getPath().isValid());
-            System.out.println("Longeur du chemin (théorique) =>"+solution.getPath().getLength());
-            System.out.println("nombre de successeur testee :"+ this.nombreSucceurTeste);
+            //System.out.println("Path Found is Valid? "+ solution.getPath().isValid());
+            //System.out.println("Longeur du chemin (théorique) =>"+solution.getPath().getLength());
+            //System.out.println("nombre de successeur testee :"+ this.nombreSucceurTeste);
+            //System.out.println("Longeur du chemin (obtenu =>)"+distanceChemin);
         }
         
         return solution;
     }
-
+    public int getNbSommetVisitees() {
+    	return this.nombreSucceurTeste;
+    }
     public Label newLabel(Node node, ShortestPathData data) {
     	return new Label(node);
     }

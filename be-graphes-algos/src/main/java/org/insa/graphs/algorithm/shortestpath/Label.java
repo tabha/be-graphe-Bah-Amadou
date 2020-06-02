@@ -20,7 +20,10 @@ public class Label implements Comparable<Label>{
 	private double cost;
 	
 	private boolean alreadySeen;
+	
 	private int father;
+	
+	
 	/*
 	 * create all Label from the graph
 	 *  a la postion i on a le bale i
