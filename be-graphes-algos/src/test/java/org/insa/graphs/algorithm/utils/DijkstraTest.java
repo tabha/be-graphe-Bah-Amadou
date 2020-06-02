@@ -136,7 +136,7 @@ private static Graph graph;
 		System.out.println();
 	}
 	
-	//@Test
+	@Test
 	public void testDistanceHG() throws Exception {
 		String mapName = "haute-garonne.mapgr";
 		String path= absolutePathCartes+"/"+mapName;
@@ -182,7 +182,7 @@ private static Graph graph;
 		destination = 254778;
 		test.testTrouverChemin(path, 1,origine,destination);  
 	}
-	//@Test
+	@Test
 	public void testTempsHG() throws Exception{
 		String mapName = "haute-garonne.mapgr";
 		String path= absolutePathCartes+"/"+mapName;
@@ -229,9 +229,10 @@ private static Graph graph;
 		destination = 254778;
 		test.testTrouverChemin(path, 0,origine,destination); 
 	}
-	//@Test
+	@Test
 	public void testDistanceINSA() throws Exception{
-		String mapName = "/home/amadou/CoursINSA3MIC/BE_graphe/projet/be-graphes/Maps/insa/europe/france/insa.mapgr";
+		String mapName = "insa.mapgr";
+		String path= absolutePathCartes+"/"+mapName;
 		DjkstraTestMap test = new  DjkstraTestMap();
 		int origine;
 		int destination;
@@ -244,13 +245,13 @@ private static Graph graph;
 		System.out.println("----- Cas d'un chemin nul ------");
 		origine = 0 ;
 		destination = 0;
-		test.testTrouverChemin(mapName, 1, origine, destination);
+		test.testTrouverChemin(path, 1, origine, destination);
 		  
 		
 		System.out.println("----- Cas d'un chemin simple ------");
 		origine = 141;
 		destination = 51;
-		test.testTrouverChemin(mapName, 1,origine,destination);    	
+		test.testTrouverChemin(path, 1,origine,destination);    	
 	
 		
 		System.out.println("----- Cas de sommets inexistants ------");
@@ -258,24 +259,24 @@ private static Graph graph;
 		System.out.println("----- Destination : Existe ------------");
 		origine = -1;
 		destination = 74699;
-		test.testTrouverChemin(mapName, 1,origine,destination);    	
+		test.testTrouverChemin(path, 1,origine,destination);    	
 
 		System.out.println("----- Cas de sommets inexistants ------");
 		System.out.println("----- Origine : Existe ----------------");
 		System.out.println("----- Destination : N'existe pas ------");
 		origine = 1545574;
 		destination = 254778;
-		test.testTrouverChemin(mapName, 1,origine,destination);    	
+		test.testTrouverChemin(path, 1,origine,destination);    	
 		
 		System.out.println("----- Cas de sommets inexistants ------");
 		System.out.println("----- Origine : N'existe pas ----------");
 		System.out.println("----- Destination : N'existe pas ------");
 		origine = -1;
 		destination = 254778;
-		test.testTrouverChemin(mapName, 1,origine,destination);  
+		test.testTrouverChemin(path, 1,origine,destination);  
 	}
 
-	//@Test 
+	@Test 
 	public void testTempsINSA() throws Exception{
 		String mapName = "insa.mapgr";
 		String path= absolutePathCartes+"/"+mapName;
@@ -387,7 +388,7 @@ private static Graph graph;
 		test.TestTrouverCheminSansOracle(path,origine,destination); 
 	}
 
-	//@Test
+	@Test
 	public void TestSansOracleINSA() throws Exception{
 		String mapName = "insa.mapgr";
 		String path= absolutePathCartes+"/"+mapName;
